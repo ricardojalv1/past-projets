@@ -2,7 +2,7 @@
 
 This repository shows my past work completed during advanced computer science courses and internships. <br />
 
-**1 - NeuralNetwork.py and RegressionTree.py** were my first models completed during my first internship. These models were meant to <br /> 1) predict crop yield
+**1 - NeuralNetwork.py and RegressionTree.py** were my first models completed during my first internship. These models were meant to 1) predict crop yield
 outcomes according to nutrients and pH and 2) help the startup experiment with machine learning models. The regression tree is the appropriate option for this analysis. <br /><br />
 **2 - Web Scraping for Real Estate Listings Validation.py** is a web scraper that uses the BeautifulSoup library to validate if a certain list of real estate
 listings or "opportunities" have been posted to Zumper.com. <br /> <br />

@@ -1,0 +1,41 @@
+{
+    "type": "graphql",
+    "EVT_DATETIME_UTC": "2021-05-26T01:17:17.035Z",
+    "EVT_DATETIME_ORG": "2021-05-26T01:17:17.035Z",
+    "@timestamp": "2021-05-26T01:17:19.018Z",
+    "@version": "1",
+    "message": "2021-05-26T01:17:17.035Z info: \t** Run query on [ShipmentUpdate] with ORM, elapsed: 17.302982ms",
+    "input": {
+      "type": "log"
+    },
+    "agent": {
+      "version": "7.12.0",
+      "type": "filebeat",
+      "ephemeral_id": "b219d6e0-f857-4ce5-a367-a1071073aed0",
+      "hostname": "mtl-apimgmt31s",
+      "name": "mtl-apimgmt31s",
+      "id": "9da350be-7fe0-4745-9b7e-16c8bae39776"
+    },
+    "MESSAGE": "info: \t** Run query on [ShipmentUpdate] with ORM, elapsed: 17.302982ms",
+    "host": {
+      "name": "mtl-apimgmt31s"
+    },
+    "tags": [
+      "tomcat",
+      "graphql",
+      "logMicroservices",
+      "stg",
+      "beats_input_codec_plain_applied"
+    ],
+    "ecs": {
+      "version": "1.8.0"
+    },
+    "ENV": "stg",
+    "log": {
+      "offset": 23483704,
+      "file": {
+        "path": "/opt/graphql/stg/cnrail-dh-tmdaas-graphql-ts/logs/info-2021-05-25.log.7"
+      }
+    }
+  }
+  

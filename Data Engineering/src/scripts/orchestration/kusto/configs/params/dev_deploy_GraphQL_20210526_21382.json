@@ -1,0 +1,13 @@
+[
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/tables/raw/drop"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/tables/raw/logGraphQL.kql"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/policies/mapping"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/policies/ingestion/batching"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/policies/ingestion/time"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/functions/standardized"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/tables/standardized/drop"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/tables/standardized"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/policies/update/standardized"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/policies/retention"},
+    {"db": "TMDH", "type": "file", "path": "src/kql/TMDH/GraphQL/policies/caching"}
+]

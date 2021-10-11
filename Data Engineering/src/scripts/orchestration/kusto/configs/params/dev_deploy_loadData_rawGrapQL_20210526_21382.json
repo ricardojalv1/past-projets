@@ -1,0 +1,3 @@
+[
+    {"db": "TMDH", "type": "file", "async" : true, "path": "src/kql/TMDH/GraphQL/change"}
+]

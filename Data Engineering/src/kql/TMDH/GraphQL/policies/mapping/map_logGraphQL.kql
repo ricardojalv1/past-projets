@@ -1,0 +1,8 @@
+
+.create-or-alter table logGraphQL 
+    ingestion json mapping "logGraphQLjsonMapping" 
+    '['
+    // Total of 2 fields
+    '{"Column": "fbToLgshDateTimeUTC", "DataType": "datetime", "Properties": {"Path": "$.@timestamp"}},'
+    '{"Column": "json_payload",        "DataType": "dynamic",  "Properties": {"Path": "$"}}'
+    ']'

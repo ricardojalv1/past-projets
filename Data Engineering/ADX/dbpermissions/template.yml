@@ -1,0 +1,96 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-28
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Template for ADX database permissions.
+
+# Parameters: 
+#             env             - Select the environment in which you want to add permissions
+#             action          - Select the action to perform (Grant, Revoke permissions)
+#             type            - Select the type based on roles (SP- aadapp, group - aadgroup, emailid/individualid - aaduser)
+#             image           - Choose the image/runtime to execute the pipeline
+#             databasename    - Name of the database on which you want to add permissions
+#             role            - Choose appropriate role that needs to be assigned
+#             aadgrouporuser  - Name of user/group/service principal for which permissions needs to be added
+#             adxuri          - Set the URI as per env 01dcode for dev, 01s for stg and 01p for prod
+
+
+parameters:
+- name: env
+  displayName: Environment
+  type: string
+  default: DEV
+  values:
+  - DEV
+  - STG
+  - PROD
+- name: action
+  displayName: Action 
+  type: string
+  default: add
+  values:
+  - add
+  - drop
+- name: type
+  displayName: Database Principal Type
+  type: string
+  default: aadapp
+  values:
+  - aadapp
+  - aadgroup
+  - aaduser
+- name: image
+  displayName: Pool Image
+  type: string
+  default: CN-DataLab
+  values:
+  - CN-DataLab
+  - CN Cloud BDAA
+- name: databasenames
+  displayName: ADX database Names
+  type: object
+  default: tt_test
+- name: role
+  displayName: ADX Permission Role
+  type: string
+  default: viewers
+  values:
+  - viewers
+  - admins
+  - users
+  - monitors
+  - ingestors
+  - unrestrictedviewers
+- name: aadgroupsorusers
+  displayName: AAD groups or user names
+  type: object
+  default: zcc1dladxspr01d
+- name: adxuri
+  displayName: ADX Endpoint or URI
+  type: string
+  default: ''
+
+jobs:
+- ${{ each aadgrouporuser in parameters.aadgroupsorusers }}:
+  - ${{ each databasename in parameters.databasenames }}:
+    - deployment: 
+      displayName: ${{ parameters.action }}ing ${{ aadgrouporuser }} as ${{ parameters.role }} in ${{ parameters.env }} ADX Database ${{ databasename }}
+      pool: ${{ parameters.image }}
+      variables:
+      - group: VG_AZ_DEPLOY_${{ parameters.env }}
+      environment: ${{ parameters.env }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: PublishToADX@1
+                inputs:
+                  targetType: 'inline'
+                  script: '.${{ parameters.action }} database ${{ databasename }} ${{ parameters.role }}  ("${{ parameters.type }}=${{ aadgrouporuser }}")'
+                  kustoUrls: '${{ parameters.adxuri }}?DatabaseName=${{ databasename }}'
+                  customAuth: false
+                  aadClientId: $(${{ parameters.env }}_SP01_App_ID)
+                  ResourceURI: '${{ parameters.adxuri }}'
+                  aadClientSecret: $(${{ parameters.env }}_SP01_Secret_ID)
+                  tenantId: '$(tenant_id)'
+

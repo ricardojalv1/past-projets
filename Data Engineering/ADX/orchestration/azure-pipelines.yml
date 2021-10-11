@@ -1,0 +1,31 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-09
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: This pipeline is used to deploy the kql code in various ADX environments.
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: BDAA-DataOps/BDAA-DataOps
+    endpoint: BDAA-templates
+  
+trigger: 
+  branches:
+    include:
+      #- develop
+      #- release/*
+    exclude:
+      - master
+      - main
+  paths:
+    exclude:
+      - azure-pipelines.yml 
+  
+extends:
+  template: ADX/orchestration/template.yml@templates
+  parameters:
+      AgentPool: CN-DataLab
+      ParamfilePath: src/scripts/orchestration/kusto/configs/params/
+      ParamFile: test.json

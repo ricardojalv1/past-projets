@@ -1,0 +1,144 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-07-27
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Pipeline to create DevOps repositories, branches and policies. 
+
+# Parameters: 
+# action        - Specify what you want to create (CreateRepo, CreateBranch, MinReviewers, CommentResolution or LinkedItems).
+# org           - Specify the name of the organization involved.
+# project       - Specify the name of the project involved.
+# repo          - Specify the name of the repository involved. 
+# branch        - Specify the name of the branch involved (optional, default is main).
+# baseBranch    - Specify the name of the branch from where to create the new branch (optional).
+# reqReviewers  - Specify the list of emails of the required reviewers separated with ';'.
+# pat           - Specify the personal access token used for authentication. 
+
+
+trigger:
+  none
+
+parameters:
+
+- name: action
+  displayName: Action
+  type: string
+  default: CreateRepo
+  values:
+  - CreateRepo
+  - CreateBranch
+  - MinReviewers
+  - CommentResolution
+  - LinkedItems
+
+- name: org
+  displayName: Organization name
+  type: string
+  default: CN-BDAA
+
+- name: project
+  displayName: Project name
+  type: string
+  default: SandBox_DAAS
+
+- name: repo
+  displayName: Repository name
+  type: string
+  default: test
+
+- name: branch
+  displayName: Branch name
+  type: string
+  default: main
+
+- name: branches
+  displayName: Branches name
+  type: object
+  default: [main, develop]
+
+- name: baseBranch
+  displayName: Base branch name
+  type: string
+  default: main
+
+- name: reqReviewers
+  displayName: Required reviewers; emails
+  type: string
+  default: ''
+
+- name: pat
+  displayName: Personal access token
+  type: string
+  default: ''
+
+stages:
+- stage: Repo_Management
+  jobs:
+  - deployment: Repo_Management
+    timeoutInMinutes: 0
+    displayName: 'Repo_Management'
+    pool: 
+      vmImage: vs2017-win2016
+    environment: DEV
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: PowerShell@2
+            displayName: 'Creating Repository ${{ parameters.repo }} and main branch'
+            inputs:
+              targetType: filePath
+              filePath: 'src/scripts/repos/repo-creation.ps1'
+              arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch main -pat ${{ parameters.pat }} '
+                
+          - task: PowerShell@2
+            displayName: 'Creating develop branch in ${{ parameters.repo }}'
+            inputs:
+              targetType: filePath
+              filePath: 'src/scripts/repos/new-branch.ps1'
+              arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branchName develop -baseBranch main -pat ${{ parameters.pat }} '
+                      
+          - task: PowerShell@2
+            displayName: 'Creating minimum number of reviewers policy for main branch'
+            inputs:
+              targetType: filePath
+              filePath: 'src/scripts/repos/minRev-policy.ps1'
+              arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch main -minRev 1 -pat ${{ parameters.pat }} '
+
+          - task: PowerShell@2
+            displayName: 'Creating minimum number of reviewers policy for develop branch'
+            inputs:
+              targetType: filePath
+              filePath: 'src/scripts/repos/minRev-policy.ps1'
+              arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch develop -minRev 2 -pat ${{ parameters.pat }} '
+
+          - ${{ each branch in parameters.branches }}:      
+            - task: PowerShell@2
+              displayName: 'Creating comment resolution policy for ${{ branch }} branch'
+              inputs:
+                targetType: filePath
+                filePath: 'src/scripts/repos/comment-resolution-policy.ps1'
+                arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch ${{ branch }} -pat ${{ parameters.pat }} '
+
+          - ${{ each branch in parameters.branches }}:      
+            - task: PowerShell@2
+              displayName: 'Creating linked work item policy for ${{ branch }} branch'
+              inputs:
+                targetType: filePath
+                filePath: 'src/scripts/repos/linked-items-policy.ps1'
+                arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch ${{ branch }} -pat ${{ parameters.pat }} '
+
+          - task: PowerShell@2
+            displayName: 'Creating required reviewers policy for the main branch'
+            inputs:
+              targetType: filePath
+              filePath: 'src/scripts/repos/required-rev-policy.ps1'
+              arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch main -reviewersIds "j.desrosiers@cn.ca" -pat ${{ parameters.pat }} '
+
+          - task: PowerShell@2
+            displayName: 'Creating required reviewers policy for the develop branch'
+            inputs:
+              targetType: filePath
+              filePath: 'src/scripts/repos/required-rev-policy.ps1'
+              arguments: '-org ${{ parameters.org }} -project ${{ parameters.project }} -repoName ${{ parameters.repo }} -branch develop -reviewersIds ${{ parameters.reqReviewers }} -pat ${{ parameters.pat }} '

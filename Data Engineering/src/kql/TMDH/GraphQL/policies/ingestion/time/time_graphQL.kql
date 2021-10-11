@@ -1,0 +1,1 @@
+.alter table logGraphQL policy ingestiontime true

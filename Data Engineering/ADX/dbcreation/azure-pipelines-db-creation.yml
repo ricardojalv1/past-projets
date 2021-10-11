@@ -1,0 +1,47 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-09
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: This pipeline is used to create ADX database in various environments.
+
+# Parameters: 
+#             env               - Select the environment in which you want to create database
+#             image             - Leave the default this pipeline runs on any image
+#             databasename      - Name of the new database to be created
+#             serviceconenction - Choose appropriate serviceconenction NP for dev and stg and Prod for prod default: DAAS-DATALAB-DATAOPS-SP-NP-DL-ADX-Platform, DAAS-DATALAB-DATAOPS-SP-PROD-DL-ADX-Platform
+#             resourcegroup     - Name of resourcegroup as per env 01dcode for dev, 01s for stg and 01p for prod, default TOR-DATALAB-DEV-RGcode,TOR-DATALAB-STG-RG,TOR-DATALAB-PROD-RG
+#             adxclustername    - Set the adxclustername as per env 01dcode for dev, 01s for stg and 01p for prod, default zcc1dllabadx01dcode, zcc1dllabadx01s, zcc1dllabadx01p
+#             softdelperiod     - Amount of time that data should be kept so it is available to query. Duration in ISO8601 format (for example, 100 days would be P100D)
+#             hotcacheperiod    - Amount of time that data should be kept in cache.Duration in ISO8601 format (for example, 100 days would be P100D).
+
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: BDAA-DataOps/BDAA-DataOps
+    endpoint: BDAA-templates
+  
+trigger: none
+#  branches:
+#    include:
+      #- develop
+      #- release/*
+#    exclude:
+#      - master
+#      - main
+#  paths:
+#    exclude:
+#      - azure-pipelines.yml 
+  
+extends:
+  template: ADX/dbcreation/template.yml@templates
+  parameters:
+      env: Dev
+      image: ubuntu-latest
+      serviceconenction: DAAS-DATALAB-DATAOPS-SP-NP-DL-ADX-Platform
+      adxclustername: zcc1dllabadx01dcode
+      resourcegroup: TOR-DATALAB-DEV-RGcode
+      databasename: tt_test
+      softdelperiod: P365D
+      hotcacheperiod: P31D

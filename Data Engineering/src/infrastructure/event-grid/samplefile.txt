@@ -1,0 +1,2 @@
+# This file exists to ensure the creation of this folder in git.
+# Delete this file when other files are added to this folder

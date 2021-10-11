@@ -1,0 +1,5 @@
+.set-or-replace stdGraphQL
+with (recreate_schema = true, 
+folder = "GraphQL/2-Standardized", 
+docstring = "Standardized table to get the required fields of GraphQL logs")
+<| fx_logGraphQL_stdGraphQL(logGraphQL) | take 0

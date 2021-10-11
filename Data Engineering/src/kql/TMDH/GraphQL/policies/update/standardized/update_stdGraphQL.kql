@@ -1,0 +1,2 @@
+.alter table stdGraphQL policy update
+'[{"IsEnabled": true, "Source": "logGraphQL", "Query": "fx_logGraphQL_stdGraphQL(logGraphQL)", "IsTransactional": false, "PropagateIngestionProperties": false}]'

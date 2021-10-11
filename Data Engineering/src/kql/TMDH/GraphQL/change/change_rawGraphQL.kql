@@ -1,0 +1,3 @@
+.append async logGraphQL <|
+cluster("https://private-zcc1dllabadx01dcode.canadacentral.kusto.windows.net").database("TT_TMDH").rawGraphQL 
+//this change script should only be run in DEV and STG to have some clean data that was previously ingested into sandbox

@@ -1,0 +1,107 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-09
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Template for ADX database creation.
+
+# This Pipeline is used to create new ADX databases in Dev,stg and Prod environments
+# Parameters: 
+#             env               - Select the environment in which you want to create database
+#             image             - Leave the default this pipeline runs on any image
+#             databasename      - Name of the new database to be created
+#             serviceconenction - Choose appropriate serviceconenction NP for dev and stg and Prod for prod
+#             resourcegroup     - Name of resourcegroup as per env 01dcode for dev, 01s for stg and 01p for prod
+#             adxclustername    - Set the adxclustername as per env 01dcode for dev, 01s for stg and 01p for prod
+#             softdelperiod     - Amount of time that data should be kept so it is available to query. Duration in ISO8601 format (for example, 100 days would be P100D)
+#             hotcacheperiod    - Amount of time that data should be kept in cache.Duration in ISO8601 format (for example, 100 days would be P100D).
+
+
+parameters:
+- name: env
+  displayName: Environment name
+  type: string
+  default: Dev
+  values:
+  - Dev
+  - Stg
+  - Prod
+- name: image
+  displayName: Pool Image
+  type: string
+  default: ubuntu-latest
+  values:
+  - windows-latest
+  - vs2017-win2016
+  - ubuntu-latest
+  - ubuntu-16.04
+  - macOS-latest
+  - macOS-10.14
+- name: serviceconenction
+  displayName: Service Connection
+  type: string
+  default: ''
+- name: adxclustername
+  displayName: ADX Cluster Name
+  type: string
+  default: ''
+- name: resourcegroup
+  displayName: Resource Group Name
+  type: string
+  default: ''
+- name: databasename
+  displayName: ADX database Name
+  type: string
+  default: tt_test
+- name: softdelperiod
+  displayName: Soft Delete Period
+  type: string
+  default: P365D
+- name: hotcacheperiod
+  displayName: Hot Cache Period
+  type: string
+  default: P31D
+
+stages:
+- ${{ if or(contains(parameters.env, 'Dev'), contains(parameters.env, 'Stg')) }}:
+  - stage: Dev
+    displayName: Dev/Stg Database Creation
+    jobs:
+    - deployment: Dev
+      displayName: ADX Database ${{ parameters.databasename }} Creation in ${{ parameters.env }} Cluster
+      pool: 
+        vmImage: ${{ parameters.image }}
+      variables:
+      - group: VG_AZ_DEPLOY_DEV
+      environment: Dev
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+               - task: AzureCLI@2
+                 inputs:
+                   azureSubscription: ${{ parameters.serviceconenction }}
+                   scriptType: 'bash'
+                   scriptLocation: 'inlineScript'
+                   inlineScript: 'az kusto database create --cluster-name ${{ parameters.adxclustername }} -g ${{ parameters.resourcegroup }} -n ${{ parameters.databasename }} --soft-delete-period ${{ parameters.softdelperiod }} --hot-cache-period ${{ parameters.hotcacheperiod }}'
+
+- ${{ if contains(parameters.env, 'Prod') }}:
+  - stage: Prod
+    displayName: Prod Database Creation
+    jobs:
+    - deployment: Prod
+      displayName: ADX Database ${{ parameters.databasename }} Creation in ${{ parameters.env }} Cluster
+      pool: 
+        vmImage: ${{ parameters.image }}
+      variables:
+      - group: VG_AZ_DEPLOY_PROD
+      environment: Prod
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+               - task: AzureCLI@2
+                 inputs:
+                   azureSubscription: ${{ parameters.serviceconenction }}
+                   scriptType: 'bash'
+                   scriptLocation: 'inlineScript'
+                   inlineScript: 'az kusto database create --cluster-name ${{ parameters.adxclustername }} -g ${{ parameters.resourcegroup }} -n ${{ parameters.databasename }} --soft-delete-period ${{ parameters.softdelperiod }} --hot-cache-period ${{ parameters.hotcacheperiod }}'

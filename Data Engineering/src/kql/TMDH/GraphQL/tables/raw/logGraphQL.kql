@@ -1,0 +1,8 @@
+.create table logGraphQL (
+    fbToLgshDateTimeUTC:datetime,
+    json_payload:dynamic
+) with 
+(
+    docstring = "Landing table for all GraphQL logs from LogStash", 
+    folder ="GraphQL/1-Raw"
+)

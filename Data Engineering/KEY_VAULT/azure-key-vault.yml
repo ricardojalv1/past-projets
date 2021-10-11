@@ -1,0 +1,35 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-08-03
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Pipeline to add or delete secrets from Azure Key Vault on various environments. 
+
+# Parameters: 
+#                 env             - Select the environment in which you want to manage secrets
+#                 action          - Select the action to perform (add, delete a secret) 
+#                 vault_name      - Specify the name of the vault in which to perform the action 
+#                 secret_name     - Specify the name of your secret  
+
+# Specifications:
+#                 secret_value    - Specify the value of your secret in the variable 
+#                                   <env>_AKV_SECRET_VALUE of the variable group <env> and lock it.  
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: BDAA-DataOps/BDAA-DataOps
+    endpoint: BDAA-templates
+  
+trigger: none
+
+  
+stages:
+- stage: ${{ variables.environments }}
+  jobs:
+  - template: KEY_VAULT/template.yml@templates
+    parameters:
+      env: DEV
+      action: set
+      vault_name: zcc1dllabakvdcode
+      secret_name: Test

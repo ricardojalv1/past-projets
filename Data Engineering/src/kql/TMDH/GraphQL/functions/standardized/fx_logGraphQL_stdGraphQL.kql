@@ -1,0 +1,13 @@
+.create-or-alter function
+with (folder = "GraphQL/2-Standardized", skipvalidation = true)
+fx_logGraphQL_stdGraphQL(LogGraphQL:(*)) {
+LogGraphQL
+| project  fbToLgshDateTimeUTC          = todatetime(json_payload["@timestamp"])
+          ,hostName                     = tostring(json_payload["host"]["name"]) 
+          ,environment                  = tostring(json_payload["ENV"])
+          ,filePath                     = tostring(json_payload["log"]["file"]["path"])
+          ,evtDateTimeUTC               = todatetime(json_payload["EVT_DATETIME_UTC"])
+          ,evtDateTimeORIG              = tostring(json_payload["EVT_DATETIME_ORG"])        
+          ,payload                      = tostring(json_payload["message"])
+          ,json_payload
+}

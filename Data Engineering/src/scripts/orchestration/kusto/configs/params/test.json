@@ -1,0 +1,3 @@
+[
+    {"db": "tt_test", "type": "file", "path": "src/kql/TMDH/GraphQL/tables/raw/logGraphQL.kql"}
+]

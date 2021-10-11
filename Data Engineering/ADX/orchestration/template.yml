@@ -1,0 +1,126 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-09
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Template for ADX deployments.
+
+parameters:
+- name: AgentPool
+  type: string
+  default: CN-DataLab
+- name: ParamfilePath
+  type: string
+  default: CN-DataLab
+- name: ParamFile
+  type: string
+  default: CN-DataLab
+
+stages:
+- stage: CI
+  jobs: 
+  - job: 'Build'
+    displayName: 'Build job'
+    condition: always()
+    pool: ${{ parameters.AgentPool }}
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: ''
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        OverWrite: true
+        CleanTargetFolder: true
+    - task: PublishPipelineArtifact@1
+      displayName: "Publish Artifact Orchestrate_drop_$(Build.BuildNumber)"
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        artifact: 'Orchestrate_drop_$(Build.BuildNumber)'
+        publishLocation: 'pipeline'
+
+- stage: DEV
+  displayName: 'Deployment to Dev'
+  dependsOn : CI
+  condition: succeeded('CI')
+  jobs:
+   - deployment: Deploy
+     timeoutInMinutes: 0
+     displayName: 'Deploy to DEV'
+     pool: ${{ parameters.AgentPool }}
+     variables:
+     - group: 'VG_AZ_DEPLOY_DEV'
+     environment: DEV
+     strategy:
+       runOnce:
+         deploy:
+          steps:
+          - download: none
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              artifactName: 'Orchestrate_drop_$(Build.BuildNumber)'
+              targetPath: '$(System.ArtifactsDirectory)'
+          - task: PythonScript@0
+            displayName: 'Deploy Orchestration script on DEV'
+            inputs:
+              scriptPath: '$(System.ArtifactsDirectory)/src/scripts/orchestration/kql_orchestration.py'
+              arguments: '-e dev -p $(System.ArtifactsDirectory)/${{ parameters.ParamfilePath }}$(DEV_Prefix)${{ parameters.ParamFile }} -ak $(DEV_SP01_Secret_ID)'
+
+- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/release/') }}:
+  - stage: STG
+    displayName: 'Deployment to STG'
+    condition: and(succeeded(),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+    jobs:
+    - deployment: Deploy
+      timeoutInMinutes: 0
+      displayName: 'Deploy to STG'
+      pool: ${{ parameters.AgentPool }}
+      variables:
+      - group: 'VG_AZ_DEPLOY_STG'
+      environment: STG
+      strategy:
+        runOnce:
+          deploy:
+           steps:
+           - download: none 
+           - task: DownloadPipelineArtifact@2
+             inputs:
+               buildType: 'current'
+               artifactName: 'Orchestrate_drop_$(Build.BuildNumber)'
+               targetPath: '$(System.ArtifactsDirectory)'
+           - task: PythonScript@0
+             displayName: 'Deploy Orchestration script on STG'
+             inputs:
+               scriptPath: '$(System.ArtifactsDirectory)/src/scripts/orchestration/kql_orchestration.py'
+               arguments: '-e stg -p $(System.ArtifactsDirectory)/${{ parameters.ParamfilePath }}$(STG_Prefix)${{ parameters.ParamFile }} -ak $(STG_SP01_Secret_ID)'
+
+- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/release/') }}:
+  - stage: PROD
+    displayName: 'Deployment to PROD'
+    condition: and(succeeded(),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+    jobs:
+    - deployment: Deploy
+      timeoutInMinutes: 0
+      displayName: 'Deploy to PROD'
+      pool: ${{ parameters.AgentPool }}
+      variables:
+      - group: 'VG_AZ_DEPLOY_PROD'
+      environment: PROD
+      strategy:
+        runOnce:
+          deploy:
+           steps:  
+           - download: none
+           - task: DownloadPipelineArtifact@2
+             inputs:
+               buildType: 'current'
+               artifactName: 'Orchestrate_drop_$(Build.BuildNumber)'
+               targetPath: '$(System.ArtifactsDirectory)'
+           - task: PythonScript@0
+             timeoutInMinutes: 0
+             displayName: 'Deploy Orchestration script on PROD'
+             inputs:
+               scriptPath: '$(System.ArtifactsDirectory)/src/scripts/orchestration/kql_orchestration.py'
+               arguments: '-e prd -p $(System.ArtifactsDirectory)/${{ parameters.ParamfilePath }}$(PROD_Prefix)${{ parameters.ParamFile }} -ak $(PROD_SP01_Secret_ID)'

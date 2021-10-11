@@ -1,0 +1,77 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-28
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Pipeline to add or delete secrets from Azure Key Vault
+
+# Parameters: 
+#                 env             - Select the environment in which you want to manage secrets
+#                 action          - Select the action to perform (add, delete a secret) 
+#                 vault_name      - Specify the name of the vault in which to perform the action 
+#                 secret_name     - Specify the name of your secret  
+#                 cli_version     - Specify the task version of Azure CLI
+
+# Specifications:
+#                 secret_value    - Specify the value of your secret in the variable 
+#                                   <env>_AKV_SECRET_VALUE of the variable group <env> and lock it.  
+
+
+parameters:
+- name: env
+  displayName: Environment name
+  type: string
+  default: Dev
+  values:
+  - DEV
+  - STG
+  - PROD
+
+- name: action
+  displayName: Action to perform
+  type: string
+  default: set
+  values:
+  - set
+  - delete
+
+- name: vault_name
+  displayName: Name of the key vault
+  type: string
+  default: ''
+
+- name: secret_name
+  displayName: Name of the secret
+  type: string
+  default: ''
+
+- name: cli_version
+  displayName: Task version of Azure CLI
+  type: string
+  default: '1'
+
+
+jobs:
+- deployment: ${{ parameters.env }}
+  timeoutInMinutes: 0
+  displayName: '${{ parameters.action }} secret named ${{ parameters.secret_name }} in ${{ parameters.vault_name }} ${{ parameters.env }}'
+  pool: CN Cloud BDAA
+  variables:
+    - group: VG_AZ_DEPLOY_${{ parameters.env }}
+  environment: ${{ parameters.env }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: self
+        - task: AzureCLI@${{ parameters.cli_version }}
+          displayName: 'Azure CLI'
+          inputs:
+            ${{ if or(contains(parameters.env, 'DEV'), contains(parameters.env, 'STG'))  }}:
+              azureSubscription: 'DAAS-DATALAB-DATAOPS-SP-NP-CN-DataLab'
+            ${{ if contains(parameters.env, 'PROD') }}:
+              azureSubscription: 'DAAS-DATALAB-DATAOPS-SP-PROD-CN-DataLab'
+            scriptLocation: inlineScript
+            ${{ if contains(parameters.action, 'set') }}:
+              inlineScript: 'az keyvault secret ${{ parameters.action }} --name "${{ parameters.secret_name }}" --vault-name "${{ parameters.vault_name }}"  --value "$(${{ parameters.env }}_AKV_SECRET_VALUE)" '
+            ${{ if contains(parameters.action, 'delete') }}:
+              inlineScript: 'az keyvault secret ${{ parameters.action }} --name "${{ parameters.secret_name }}" --vault-name "${{ parameters.vault_name }}" '

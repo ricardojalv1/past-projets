@@ -1,0 +1,51 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-06-09
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: This pipeline is used to add ADX database permissions on various environments.
+
+# Parameters: 
+#             env             - Select the environment in which you want to add permissions
+#             action          - Select the action to perform ('Grant' or 'Revoke' a permission)
+#             type            - Select the type based on roles (SP- aadapp, group - aadgroup, emailid/individualid - aaduser)
+#             image           - Choose the image/runtime to execute the pipeline
+#             databasename    - Name of the database on which you want to add permissions
+#             role            - Choose appropriate role that needs to be assigned
+#             aadgrouporuser  - Name of user/group/service principal for which permissions needs to be added
+#             adxuri          - Set the URI as per env 01dcode for dev, 01s for stg and 01p for prod
+#                               defaults :  - https://private-zcc1dllabadx01dcode.canadacentral.kusto.windows.net
+#                                           - https://private-zcc1dllabadx01s.canadacentral.kusto.windows.net
+#                                           - https://private-zcc1dllabadx01p.canadacentral.kusto.windows.net
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: BDAA-DataOps/BDAA-DataOps
+    endpoint: BDAA-templates
+  
+trigger: none
+#  branches:
+#    include:
+      #- develop
+      #- release/*
+#    exclude:
+#      - master
+#      - main
+#  paths:
+#    exclude:
+#      - azure-pipelines.yml 
+  
+stages:
+- stage: ${{ variables.environments }}
+  jobs:
+  - template: ADX/dbpermissions/template.yml@templates
+    parameters:
+      env: DEV
+      action: drop
+      type: aaduser
+      image: CN-DataLab
+      databasenames: [tt_test]
+      role: viewers
+      aadgroupsorusers: [akhila.podduturi@cn.ca]
+      adxuri: https://private-zcc1dllabadx01dcode.canadacentral.kusto.windows.net

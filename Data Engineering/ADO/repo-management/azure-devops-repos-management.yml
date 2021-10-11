@@ -1,0 +1,26 @@
+#Owner      : DataOps Specialist
+#Date       : 2021-07-27
+#Updated    : Nil
+#Version    : 1.0.0
+#Description: Pipeline to create DevOps repositories, branches and policies. 
+
+# Parameters: 
+# org           - Specify the name of the organization involved.
+# project       - Specify the name of the project involved.
+# repo          - Specify the name of the repository involved to create (must start with 'cnrail').
+# reqReviewers  - Specify the list of emails of the required reviewers separated with ';'.
+# pat           - Specify the personal access token used for authentication. 
+
+trigger: none
+
+variables:
+ - group: VG_AZ_DEPLOY_DEV
+  
+extends:
+  template: template.yml
+  parameters:
+      org: CN-BDAA
+      project: SandBox_DAAS
+      repo: cnrail_TestRepo
+      reqReviewers: "akhila.podduturi@cn.ca"
+      pat: $(PAT_Branch)

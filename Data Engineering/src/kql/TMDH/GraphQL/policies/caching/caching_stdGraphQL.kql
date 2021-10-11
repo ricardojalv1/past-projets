@@ -1,0 +1,1 @@
+.alter table stdGraphQL policy caching hot = 1d

@@ -1,0 +1,69 @@
+S -> PR1S VP1S NP | PR1S VP1S | PR2S VP2S NP | PR2S VP2S | PR3S VP3S NP | PR3S VP3S | PR1P VP1P NP | PR1P VP1P | PR2P VP2P NP | PR2P VP2P | PR3P VP3P NP | PR3P VP3P | NP3S VP3S NP | NP3S VP3S | NP3P VP3P NP | NP3P VP3P | PR1S DOP VP1S | PR2S DOP VP2S | PR3S DOP VP3S | PR1P DOP VP1P | PR2P DOP VP2P | PR3P DOP VP3P | NP3S DOP VP3S | NP3P DOP VP3P 
+
+NP -> NP3S | NP3P
+
+DOP -> 'me' | 'te' | 'le' | 'la' | 'nous' | 'vous' | 'les' 
+
+NP3S -> DTM NMS | DTF NFS | PN | PNM | PNF | DTM PNMS_D | DTF PNFS_D | DTM PNMS_D AMS_POST | DTM AMS_PRE PNMS_D | DTF PNFS_D AFS_POST | DTF AFS_PRE PNFS_D | DTM AMS_PRE PNM | DTF AFS_PRE PNF | DTM NMS AMS_POST | DTM AMS_PRE NMS | DTF NFS AFS_POST | DTF AFS_PRE NFS  
+
+NP3P -> DTP NMP | DTP NFP | DTP PNMP_D | DTP PNFP_D | DTP PNMP_D AMP_POST | DTP AMP_PRE PNMP_D | DTP PNFP_D AFP_POST | DTP AFP_PRE PNFP_D | DTP NMP AMP_POST | DTP AMP_PRE NMP | DTP NFP AFP_POST | DTP AFP_PRE NFP 
+
+VP1S -> V1S  
+VP2S -> V2S 
+VP3S -> V3S 
+VP1P -> V1P 
+VP2P -> V2P 
+VP3P -> V3P 
+
+V1S -> 'mange' | 'regarde' | 'veux' | 'ne mange pas' | 'ne regarde pas' | 'ne veux pas'
+V2S -> 'manges' | 'regardes' | 'veux' | 'ne manges pas' | 'ne regardes pas' | 'ne veux pas'
+V3S -> 'mange' | 'regarde' | 'veut' | 'ne mange pas' | 'ne regarde pas' | 'ne veut pas'
+V1P -> 'mangeons' | 'regardons' | 'voulons' | 'ne mangeons pas' | 'ne regardons pas' | 'ne voulons pas'
+V2P -> 'mangez' | 'regardez'| 'voulez' | 'ne mangez pas' | 'ne regardez pas' | 'ne voulez pas'
+V3P -> 'mangent' | 'regardent' | 'veulent' | 'ne mangent pas' | 'ne regardent pas' | 'ne veulent pas'
+
+
+NMS -> 'chat' | 'poisson'  | 'homme' | 'nuage'
+NMP -> 'chats' | 'poissons' | 'nuages' | 'hommes'
+NFS -> 'chatte' | 'television' | 'semaine'
+NFP -> 'chattes' | 'televisions' | 'semaines'
+
+PNMS_D -> 'Canada' | 'Portugal' | 'Minnesota'
+PNFS_D -> 'Gaspesie' | 'Belgique' | 'France'
+PNMP_D -> 'Etats-Unis' | 'Canadiens' | 'Belges'
+PNFP_D -> 'Iles-de-la-Madelaine' | 'Nations-Unies' | 'Iles Canaries'
+
+PN -> 'Montreal' | 'Toronto' | 'Gatineau'
+PNM  -> 'Jonathan' | 'Nathan' | 'Benjamin'
+PNF -> 'Marie' | 'Heloise' | 'Genevieve'
+
+PR3S -> PR3SM | PR3SF  
+PR3P -> PR3PM | PR3PF
+
+PR1S -> 'Je' 
+PR2S -> 'Tu'  
+PR3SM -> 'Il'
+PR3SF -> 'Elle'
+PR1P -> 'Nous' 
+PR2P -> 'Vous'
+PR3PM -> 'Ils'
+PR3PF -> 'Elles'
+
+DTM -> 'le' 
+DTF -> 'la' 
+DTP -> 'les'
+
+AMS_POST -> 'noir' | 'dernier' | 'ancien' 
+AMS_PRE -> 'joli' | 'dernier' | 'ancien' | 'beau' | 'bel'
+
+AMP_POST -> 'noirs' | 'derniers' | 'anciens' 
+AMP_PRE -> 'joli' | 'derniers' | 'anciens' | 'beaux' 
+
+AFS_POST -> 'noire' | 'derniere' | 'ancienne' 
+AFS_PRE -> 'jolie' | 'derniere' | 'ancienne' | 'belle'
+
+AFP_POST -> 'noires' | 'dernieres' | 'anciennes' 
+AFP_PRE -> 'jolies' | 'dernieres' | 'anciennes' | 'belles'
+
+
+

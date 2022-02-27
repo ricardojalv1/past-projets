@@ -10,3 +10,5 @@ listings or "opportunities" have been posted to Zumper.com. <br /> <br />
 **4 - Sentiment Classification with Logistic Regression - Preprocessing.py** is a logistic regression model used to make binary sentiment classification on movie reviews.
 This was done in the context of my COMP 550 - Natural Language Processing class. The objective of this assignment was to learn about the best NLP pre-processing
 decisions and not about maximizing the accuracy of the model.  <br />
+
+**5 - French CYK and Tree.py** is an implementation of the Cocke–Younger–Kasami algorithm (CYK) on a simplified french context-free grammar (french-grammar.txt and french-grammar - readable.txt). The file deconstructs a french sentence into Part-of-Speech tags and prints a tree according to the grammar rules. This was undertaken in the context of my COMP 550 - Natural Language Processing class.

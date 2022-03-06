@@ -17,4 +17,6 @@ decisions and not about maximizing the accuracy of the model.  <br />
 
 **7 - Decision Tree and KNN** is a folder containing the notebook and report of a machine learning assignment where we had to use a decision tree and a KNN algorithm to predict survival and diagnosis with medical data. This was undertaken in the context of my COMP **551 - Applied Machine Learning** class.   
 
+**8 - Spotify Class Prediction** is an exploration of using neural networks to predict the category of a song according to Spotify data. This was done in the context of my **INSY 463 Deep Learning for Business Analytics** class. 
+
 **More machine learning and forecasting projects to come.** 
